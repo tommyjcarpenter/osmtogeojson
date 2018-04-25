@@ -33,7 +33,6 @@ for f in [x for x in gj_ids if x in my_ids]:
                         try:
                             assert c in my_ids[f][k]["coordinates"] or list(reversed(c)) in my_ids[f][k]["coordinates"]
                         except:
-                            pass
                             print((f, gj_ids[f][k]["type"]))
 #                            print(list(reversed(c)))
 #                            print("\n")

@@ -80,7 +80,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
         if len([x for x in way_types if x == "Polygon"]) == len(way_types):
             # all polygons, the resulting relation geometry is polygon
             rel["geometry"]["type"] = "Polygon"
-            rel["geometry"]["coordinates"] = [x for x in way_coordinate_blocks]
+            rel["geometry"]["coordinates"] = [x[0] for x in way_coordinate_blocks]
         elif len([x for x in way_types if x == "LineString"]) == len(way_types):
             rel["geometry"]["type"] = "MultiLineString"
             rel["geometry"]["coordinates"] = [x for x in way_coordinate_blocks]
