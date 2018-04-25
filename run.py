@@ -25,6 +25,7 @@ print([x for x in my_ids if x not in gj_ids])
 print("\n")
 for f in [x for x in gj_ids if x in my_ids]:
     if gj_ids[f] != my_ids[f]:
+        print(("FAILING", f))
         for k in gj_ids[f]:
             if gj_ids[f][k] != my_ids[f][k]:
                 if k == "geometry":
@@ -33,11 +34,7 @@ for f in [x for x in gj_ids if x in my_ids]:
                         try:
                             assert c in my_ids[f][k]["coordinates"] or list(reversed(c)) in my_ids[f][k]["coordinates"]
                         except:
-                            print((f, gj_ids[f][k]["type"]))
-#                            print(list(reversed(c)))
-#                            print("\n")
-#                            for mmm  in my_ids[f][k]["coordinates"]:
-#                                print(mmm)
+                            pass
                             #print("theirs")
                             #print(json.dumps(gj_ids[f]))
                             #print("mine")
