@@ -54,6 +54,7 @@ def _preprocess(j):
 
 
 def _process_relations(resulting_geojson, relation_storage, way_storage, node_storage, nodes_used_in_ways):
+    ways_used_in_relations = {}
     for rel_id in relation_storage:
         r = relation_storage[rel_id]
         rel = {}
@@ -71,6 +72,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
                 processed = _process_single_way(way_id, way_storage[way_id], node_storage, nodes_used_in_ways)
                 way_types.append(processed["geometry"]["type"])
                 way_coordinate_blocks.append(processed["geometry"]["coordinates"])
+                ways_used_in_relations[way_id] = 1
             else:
                 print(mem["type"])
 
@@ -103,6 +105,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
             print(way_types)
 
         resulting_geojson["features"].append(rel)
+    return ways_used_in_relations
 
 
 def _process_single_way(way_id, w, node_storage, nodes_used_in_ways):
@@ -132,8 +135,7 @@ def _process_single_way(way_id, w, node_storage, nodes_used_in_ways):
     return way
 
 
-def _process_ways(resulting_geojson, way_storage, ways_reused, node_storage, nodes_used_in_ways):
-    ways_used_in_relations = {}
+def _process_ways(resulting_geojson, way_storage, ways_used_in_relations, ways_reused, node_storage, nodes_used_in_ways):
     for way_id in way_storage:
         if way_id not in ways_used_in_relations or way_id in ways_reused:
             w = way_storage[way_id]
@@ -164,21 +166,21 @@ def process_osm_json(j):
     resulting_geojson["features"] = []
     way_storage, ways_reused, node_storage, nodes_reused, relation_storage = _preprocess(j)
     nodes_used_in_ways = {}
-    _process_relations(resulting_geojson, relation_storage, way_storage, node_storage, nodes_used_in_ways)
-    _process_ways(resulting_geojson, way_storage, ways_reused, node_storage, nodes_used_in_ways)
+    ways_used_in_relations = _process_relations(resulting_geojson, relation_storage, way_storage, node_storage, nodes_used_in_ways)
+    _process_ways(resulting_geojson, way_storage, ways_used_in_relations, ways_reused, node_storage, nodes_used_in_ways)
     _process_nodes(resulting_geojson, node_storage, nodes_used_in_ways, nodes_reused)
     return resulting_geojson
 
 
 
-#f = open("summitschooloverpass.json", "r").read()
-f = open("tests/fixtures/np_overpass.json", "r").read()
+f = open("tests/fixtures/summitschool_overpass.json", "r").read()
+#f = open("tests/fixtures/np_overpass.json", "r").read()
 j = json.loads(f)
 
 resulting_geojson = process_osm_json(j)
 
-#with open("summitschoolgeo.json", "r") as f:
-with open("tests/fixtures/np_geojson.json", "r") as f:
+with open("tests/fixtures/summitschool_geojson.json", "r") as f:
+#with open("tests/fixtures/np_geojson.json", "r") as f:
     gj = json.loads(f.read())
 
 gj_ids = {}
@@ -189,7 +191,10 @@ my_ids = {}
 for f in resulting_geojson["features"]:
     my_ids[f["id"]] = f
 
-#print([x for x in gj_ids if x not in my_ids])
+print([x for x in gj_ids if x not in my_ids])
+print("\n")
+print([x for x in my_ids if x not in gj_ids])
+print("\n")
 for f in [x for x in gj_ids if x in my_ids]:
     if gj_ids[f] != my_ids[f]:
         for k in gj_ids[f]:
