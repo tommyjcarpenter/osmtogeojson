@@ -9,7 +9,13 @@ def _determine_feature_type(way_nodes):
         return "LineString"
 
 
-def _preprocess():
+def _preprocess(j):
+    """preprocess the file out into nodes ways and relations"""
+    node_storage = {}
+    nodes_reused = {}
+    way_storage = {}
+    ways_reused = {}
+    relation_storage = {}
     for elem in j["elements"]:
         # on our first pass, we go through and put all the nodes into storage
         eid = elem["id"]
@@ -20,7 +26,7 @@ def _preprocess():
             else:
                 # if it's just a pure duplicate, which DOES AND CAN happen with certain overpass queries, just drop it
                 if elem != node_storage[eid]:
-                    node_reused[eid] = 1
+                    nodes_reused[eid] = 1
                     # take the one that has the tags.
                     if "tags" in elem:
                         node_storage[eid] = elem
@@ -44,8 +50,10 @@ def _preprocess():
             else:
                 raise Exception()
 
+    return way_storage, ways_reused, node_storage, nodes_reused, relation_storage
 
-def _process_relations(resulting_geojson):
+
+def _process_relations(resulting_geojson, relation_storage, way_storage, node_storage, nodes_used_in_ways):
     for rel_id in relation_storage:
         r = relation_storage[rel_id]
         rel = {}
@@ -60,8 +68,7 @@ def _process_relations(resulting_geojson):
         for mem in r["members"]:
             if mem["type"] == "way":
                 way_id = mem["ref"]
-                processed = _process_single_way(way_id, way_storage[way_id])
-
+                processed = _process_single_way(way_id, way_storage[way_id], node_storage, nodes_used_in_ways)
                 way_types.append(processed["geometry"]["type"])
                 way_coordinate_blocks.append(processed["geometry"]["coordinates"])
             else:
@@ -98,7 +105,7 @@ def _process_relations(resulting_geojson):
         resulting_geojson["features"].append(rel)
 
 
-def _process_single_way(way_id, w):
+def _process_single_way(way_id, w, node_storage, nodes_used_in_ways):
     way = {}
     way["type"] = "Feature"
     wid = "way/{}".format(way_id)
@@ -125,18 +132,19 @@ def _process_single_way(way_id, w):
     return way
 
 
-def _process_ways(resulting_geojson):
+def _process_ways(resulting_geojson, way_storage, ways_reused, node_storage, nodes_used_in_ways):
+    ways_used_in_relations = {}
     for way_id in way_storage:
         if way_id not in ways_used_in_relations or way_id in ways_reused:
             w = way_storage[way_id]
-            way = _process_single_way(way_id, w)
+            way = _process_single_way(way_id, w, node_storage, nodes_used_in_ways)
             resulting_geojson["features"].append(way)
 
 
-def _process_nodes(resulting_geojson):
+def _process_nodes(resulting_geojson, node_storage, nodes_used_in_ways, nodes_reused):
     # dump the nodes that were not a part of a way into the resulting json
     for nid in node_storage:
-        if nid not in nodes_used_in_ways or nid in node_reused:
+        if nid not in nodes_used_in_ways or nid in nodes_reused:
             n = node_storage[nid]
             node = {}
             node["type"] = "Feature"
@@ -150,31 +158,27 @@ def _process_nodes(resulting_geojson):
             resulting_geojson["features"].append(node)
 
 
-f = open("summitschooloverpass.json", "r").read()
-#f = open("RAW_OVERPASS_OUT.json", "r").read()
+def process_osm_json(j):
+    resulting_geojson = {}
+    resulting_geojson["type"] = "FeatureCollection"
+    resulting_geojson["features"] = []
+    way_storage, ways_reused, node_storage, nodes_reused, relation_storage = _preprocess(j)
+    nodes_used_in_ways = {}
+    _process_relations(resulting_geojson, relation_storage, way_storage, node_storage, nodes_used_in_ways)
+    _process_ways(resulting_geojson, way_storage, ways_reused, node_storage, nodes_used_in_ways)
+    _process_nodes(resulting_geojson, node_storage, nodes_used_in_ways, nodes_reused)
+    return resulting_geojson
+
+
+
+#f = open("summitschooloverpass.json", "r").read()
+f = open("tests/fixtures/np_overpass.json", "r").read()
 j = json.loads(f)
 
-node_storage = {}
-nodes_used_in_ways = {}
-node_reused = {}
+resulting_geojson = process_osm_json(j)
 
-way_storage = {}
-ways_used_in_relations = {}
-ways_reused = {}
-
-relation_storage = {}
-
-resulting_geojson = {}
-resulting_geojson["type"] = "FeatureCollection"
-resulting_geojson["features"] = []
-
-_preprocess()
-_process_relations(resulting_geojson)
-_process_ways(resulting_geojson)
-_process_nodes(resulting_geojson)
-
-with open("summitschoolgeo.json", "r") as f:
-#with open("GEOJSON.json", "r") as f:
+#with open("summitschoolgeo.json", "r") as f:
+with open("tests/fixtures/np_geojson.json", "r") as f:
     gj = json.loads(f.read())
 
 gj_ids = {}
