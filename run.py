@@ -33,16 +33,16 @@ for f in [x for x in gj_ids if x in my_ids]:
                         try:
                             assert c in my_ids[f][k]["coordinates"] or list(reversed(c)) in my_ids[f][k]["coordinates"]
                         except:
-                            print(f)
-                            print(gj_ids[f][k]["type"])
+                            pass
+                            print((f, gj_ids[f][k]["type"]))
 #                            print(list(reversed(c)))
 #                            print("\n")
 #                            for mmm  in my_ids[f][k]["coordinates"]:
 #                                print(mmm)
-                            print("theirs")
-                            print(json.dumps(gj_ids[f][k]))
-                            print("mine")
-                            print(json.dumps(my_ids[f][k]))
+                            #print("theirs")
+                            #print(json.dumps(gj_ids[f]))
+                            #print("mine")
+                            #print(json.dumps(my_ids[f]))
 #
                 else:
                     raise Exception()

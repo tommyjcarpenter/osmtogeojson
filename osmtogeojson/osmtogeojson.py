@@ -1,3 +1,5 @@
+from osmtogeojson import merge
+
 def _determine_feature_type(way_nodes):
     # get more advanced???
     if way_nodes[0] == way_nodes[-1]:
@@ -76,28 +78,13 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
         rel["geometry"] = {}
 
         if len([x for x in way_types if x == "Polygon"]) == len(way_types):
-            #all polygons, the resulting relation geometry is polygon
+            # all polygons, the resulting relation geometry is polygon
             rel["geometry"]["type"] = "Polygon"
             rel["geometry"]["coordinates"] = [x for x in way_coordinate_blocks]
-
         elif len([x for x in way_types if x == "LineString"]) == len(way_types):
             rel["geometry"]["type"] = "MultiLineString"
-
-            #coordinate_list = []
-            #clist = []
-            #for x in way_coordinate_blocks:
-            #    if clist == []:
-            #        clist = x[0]
-            #    else:
-            #        if clist[-1] == x[0]:
-            #            clist += x[1:]
-            #        else:
-            #            coordinate_list.append(clist)
-            #            clist = x
-            #coordinate_list.append(clist)
-            #rel["geometry"]["coordinates"] = coordinate_list
             rel["geometry"]["coordinates"] = [x for x in way_coordinate_blocks]
-
+            merge.merge_line_string(rel)
         else:
             print(way_types)
 
