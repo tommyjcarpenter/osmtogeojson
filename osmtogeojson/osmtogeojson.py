@@ -1,6 +1,3 @@
-import json
-
-
 def _determine_feature_type(way_nodes):
     # get more advanced???
     if way_nodes[0] == way_nodes[-1]:
@@ -170,54 +167,3 @@ def process_osm_json(j):
     _process_ways(resulting_geojson, way_storage, ways_used_in_relations, ways_reused, node_storage, nodes_used_in_ways)
     _process_nodes(resulting_geojson, node_storage, nodes_used_in_ways, nodes_reused)
     return resulting_geojson
-
-
-
-f = open("tests/fixtures/summitschool_overpass.json", "r").read()
-#f = open("tests/fixtures/np_overpass.json", "r").read()
-j = json.loads(f)
-
-resulting_geojson = process_osm_json(j)
-
-with open("tests/fixtures/summitschool_geojson.json", "r") as f:
-#with open("tests/fixtures/np_geojson.json", "r") as f:
-    gj = json.loads(f.read())
-
-gj_ids = {}
-for f in gj["features"]:
-    gj_ids[f["id"]] = f
-
-my_ids = {}
-for f in resulting_geojson["features"]:
-    my_ids[f["id"]] = f
-
-print([x for x in gj_ids if x not in my_ids])
-print("\n")
-print([x for x in my_ids if x not in gj_ids])
-print("\n")
-for f in [x for x in gj_ids if x in my_ids]:
-    if gj_ids[f] != my_ids[f]:
-        for k in gj_ids[f]:
-            if gj_ids[f][k] != my_ids[f][k]:
-                if k == "geometry":
-                    for c in gj_ids[f][k]["coordinates"]:
-                            # sometimes OSM to GEOJSON uses "backwards" or "counter clockwise" polygons.
-                        try:
-                            assert c in my_ids[f][k]["coordinates"] or list(reversed(c)) in my_ids[f][k]["coordinates"]
-                        except:
-                            print(f)
-                            print(gj_ids[f][k]["type"])
-#                            print(list(reversed(c)))
-#                            print("\n")
-#                            for mmm  in my_ids[f][k]["coordinates"]:
-#                                print(mmm)
-                            print("theirs")
-                            print(json.dumps(gj_ids[f][k]))
-                            print("mine")
-                            print(json.dumps(my_ids[f][k]))
-#
-                else:
-                    raise Exception()
-                    print((f, k, gj_ids[f][k] == my_ids[f][k], gj_ids[f][k], my_ids[f][k]))
-
-#print(json.dumps(resulting_geojson))
