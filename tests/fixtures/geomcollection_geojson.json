@@ -1,0 +1,82 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "relation/5576903",
+      "properties": {
+        "@id": "relation/5576903",
+        "amenity": "parking",
+        "fee": "yes",
+        "name": "Schillerplatz",
+        "opening_hours": "24/7",
+        "operator": "APCOA PARKING Deutschland GmbH",
+        "parking": "underground",
+        "site": "parking",
+        "type": "site",
+        "url": "https://service.stuttgart.de/lhs-services/ivlz/index.php?uid=35&objectid=108523&objecttype=dept&page=svc&servicetype=parking&serviceid=9356&detailid=65&showservice=1",
+        "website": "https://www.apcoa.de/parken-in/stuttgart/schillerplatz.html"
+      },
+      "geometry": {
+        "geometries": [
+          {
+            "coordinates": [
+              [
+                9.1785771,
+                48.7769778
+              ],
+              [
+                9.1785466,
+                48.7769462
+              ]
+            ],
+            "type": "LineString"
+          },
+          {
+            "coordinates": [
+              [
+                [
+                  9.178599,
+                  48.7769776
+                ],
+                [
+                  9.1785505,
+                  48.7769354
+                ],
+                [
+                  9.1785521,
+                  48.7769096
+                ],
+                [
+                  9.1785628,
+                  48.776876
+                ],
+                [
+                  9.1786147,
+                  48.7768176
+                ],
+                [
+                  9.1786676,
+                  48.7767825
+                ],
+                [
+                  9.178599,
+                  48.7769776
+                ]
+              ]
+            ],
+            "type": "Polygon"
+          },
+          {
+            "coordinates": [
+              9.1786676,
+              48.7767825
+            ],
+            "type": "Point"
+          }
+        ],
+        "type": "GeometryCollection"
+      }
+    }
+  ]
+}

@@ -1,4 +1,7 @@
+import logging
 from osmtogeojson import merge
+
+logger = logging.getLogger(__name__)
 
 def _determine_feature_type(way_nodes):
     # get more advanced???
@@ -65,6 +68,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
 
         way_types = []
         way_coordinate_blocks = []
+        only_way_members = True
         for mem in r["members"]:
             if mem["type"] == "way":
                 way_id = mem["ref"]
@@ -73,7 +77,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
                 way_coordinate_blocks.append(processed["geometry"]["coordinates"])
                 ways_used_in_relations[way_id] = 1
             else:
-                print(mem["type"])
+                only_way_members = False
 
         rel["geometry"] = {}
 
@@ -86,8 +90,31 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
             rel["geometry"]["coordinates"] = [x for x in way_coordinate_blocks]
             merge.merge_line_string(rel)
         else:
-            print(way_types)
-
+            # relation does not consist of Polygons or LineStrings only... 
+            # In this case, overpass reports every individual member with its relation reference
+            # Another option would be to export such a relation as GeometryCollection
+           
+            rel["geometry"]["type"] = "GeometryCollection"
+            member_geometries = []
+            for mem in r["members"]:
+                if mem["type"] == "way":
+                    way_id = mem["ref"]
+                    processed = _process_single_way(way_id, way_storage[way_id], node_storage, nodes_used_in_ways)
+                    member_geometries.append(processed["geometry"])
+                elif mem["type"] == "node":
+                    node_id = mem["ref"]
+                    node = node_storage[node_id]
+                    geometry = {}
+                    geometry["type"] = "Point"
+                    geometry["coordinates"] = [node["lon"], node["lat"]]
+                    member_geometries.append(geometry)
+                    # Well, used_in_rels, but we want to ignore it as well, don't we?
+                    nodes_used_in_ways[node_id] = 1
+                else:
+                    logger.warn("Relations members not yet handled (%s)", rel_id)
+                
+            rel["geometry"]["geometries"] = member_geometries
+            
         resulting_geojson["features"].append(rel)
     return ways_used_in_relations
 
