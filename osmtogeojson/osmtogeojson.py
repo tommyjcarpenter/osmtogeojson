@@ -61,7 +61,7 @@ def _process_relations(resulting_geojson, relation_storage, way_storage, node_st
         rid = "relation/{}".format(rel_id)
         rel["id"] = rid
         rel["properties"] = r["tags"] if "tags" in r else {}
-        rel["properties"]["id"] = rid
+        rel["properties"]["@id"] = rid
 
         way_types = []
         way_coordinate_blocks = []
@@ -98,7 +98,7 @@ def _process_single_way(way_id, w, node_storage, nodes_used_in_ways):
     wid = "way/{}".format(way_id)
     way["id"] = wid
     way["properties"] = w["tags"] if "tags" in w else {}
-    way["properties"]["id"] = wid  # the original osmtogeojson does this, so following suit
+    way["properties"]["@id"] = wid  # the original osmtogeojson does this, so following suit
     way["geometry"] = {}
 
     geo_type = _determine_feature_type(w["nodes"])
@@ -137,7 +137,7 @@ def _process_nodes(resulting_geojson, node_storage, nodes_used_in_ways, nodes_re
             new_id = "node/{}".format(n["id"])
             node["id"] = new_id
             node["properties"] = n["tags"] if "tags" in n else {}
-            node["properties"]["id"] = new_id
+            node["properties"]["@id"] = new_id
             node["geometry"] = {}
             node["geometry"]["type"] = "Point"
             node["geometry"]["coordinates"] = [n["lon"], n["lat"]]
