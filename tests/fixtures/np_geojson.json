@@ -34,7 +34,7 @@
     "type": "boundary",
     "wikidata": "Q1021568",
     "wikipedia": "en:New Providence, New Jersey",
-    "id": "relation/170513"
+    "@id": "relation/170513"
   },
   "geometry": {
     "type": "Polygon",
