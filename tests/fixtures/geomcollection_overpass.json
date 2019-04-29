@@ -1,0 +1,144 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.55.6 486819c8",
+  "osm3s": {
+    "timestamp_osm_base": "2019-04-25T18:26:02Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "notes": "This is a shortened test fixture, the real feature has some more members...",
+  "elements": [
+{
+  "type": "node",
+  "id": 20850150,
+  "lat": 48.7767825,
+  "lon": 9.1786676,
+  "tags": {
+    "amenity": "parking_entrance",
+    "foot": "yes",
+    "maxheight": "2",
+    "parking": "underground"
+  }
+},
+{
+  "type": "node",
+  "id": 3801571628,
+  "lat": 48.7768176,
+  "lon": 9.1786147
+},
+{
+  "type": "node",
+  "id": 3801571632,
+  "lat": 48.7768760,
+  "lon": 9.1785628
+},
+{
+  "type": "node",
+  "id": 3817566170,
+  "lat": 48.7769096,
+  "lon": 9.1785521,
+  "tags": {
+    "barrier": "lift_gate",
+    "layer": "-1",
+    "location": "underground"
+  }
+},
+{
+  "type": "node",
+  "id": 3801571640,
+  "lat": 48.7769354,
+  "lon": 9.1785505
+},
+{
+  "type": "node",
+  "id": 3801569051,
+  "lat": 48.7769776,
+  "lon": 9.1785990
+},
+{
+  "type": "node",
+  "id": 3801571641,
+  "lat": 48.7769462,
+  "lon": 9.1785466
+},
+{
+  "type": "node",
+  "id": 3801571647,
+  "lat": 48.7769778,
+  "lon": 9.1785771
+},
+{
+  "type": "way",
+  "id": 376770460,
+  "nodes": [
+    3801571647,
+    3801571641
+  ],
+  "tags": {
+    "covered": "yes",
+    "highway": "footway",
+    "indoor": "yes",
+    "layer": "-2",
+    "location": "underground",
+    "ref": "Ebene B"
+  }
+},
+{
+  "type": "way",
+  "id": 376770534,
+  "nodes": [
+    3801569051,
+    3801571640,
+    3817566170,
+    3801571632,
+    3801571628,
+    20850150,
+    3801569051
+  ],
+  "tags": {
+    "highway": "service",
+    "incline": "up",
+    "layer": "-1",
+    "location": "underground",
+    "oneway": "yes",
+    "service": "driveway",
+    "sidewalk": "right",
+    "tunnel": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 5576903,
+  "members": [
+    {
+      "type": "way",
+      "ref": 376770460,
+      "role": ""
+    },
+    {
+      "type": "way",
+      "ref": 376770534,
+      "role": ""
+    },
+    {
+      "type": "node",
+      "ref": 20850150,
+      "role": "exit"
+    }
+  ],
+  "tags": {
+    "amenity": "parking",
+    "fee": "yes",
+    "name": "Schillerplatz",
+    "opening_hours": "24/7",
+    "operator": "APCOA PARKING Deutschland GmbH",
+    "parking": "underground",
+    "site": "parking",
+    "type": "site",
+    "url": "https://service.stuttgart.de/lhs-services/ivlz/index.php?uid=35&objectid=108523&objecttype=dept&page=svc&servicetype=parking&serviceid=9356&detailid=65&showservice=1",
+    "website": "https://www.apcoa.de/parken-in/stuttgart/schillerplatz.html"
+  }
+}
+
+  ]
+}
+
